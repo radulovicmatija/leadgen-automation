@@ -1,0 +1,1848 @@
+{
+  "name": "Horizen AI - Lead Gen Cold Email",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9,
+              "triggerAtMinute": 3
+            }
+          ]
+        }
+      },
+      "id": "33fe2981-a8c5-4ad3-8301-63a7bb0dfbf1",
+      "name": "09:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 11 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "c957e96f-a91a-4524-be19-05a10e5ccb54",
+      "name": "11:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 13 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "896c7d81-d6cb-4f7f-9ee6-1c7cb6f2939b",
+      "name": "13:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 15 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "4119921a-aeec-47ae-8eb7-03ee06557539",
+      "name": "15:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 17 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "ec3f9f9b-2131-4251-b16f-72887ea2c810",
+      "name": "17:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1TVnTBCoes7hH5KSMv9AppWvPO7dzHyOxrDmX1PVpfpM/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Лист1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1TVnTBCoes7hH5KSMv9AppWvPO7dzHyOxrDmX1PVpfpM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "8208e2da-f173-42a3-95a2-573cda279f36",
+      "name": "Get Leads",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        240,
+        400
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zjzCsHAwejFAU1U4",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "has-email",
+              "leftValue": "={{ $json.Email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "not-contacted",
+              "leftValue": "={{ $json.Kontaktiran }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "db1388f9-41fe-4602-80e5-e681c5d9fc6b",
+      "name": "Filter: Has Email & Not Contacted",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2,
+      "position": [
+        464,
+        400
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "d605f88e-f767-404f-a185-b00c5b66fc41",
+      "name": "Take 1 Lead",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        672,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "role": "system",
+              "content": "=Ti si ekspert za B2B cold email outreach. Pišeš kratke, personalizovane cold emailove na srpskom jeziku, latiničnim pismom.\n\nStil pisanja:\n- Direktan, samopouzdan i human — nikad robotski ili prodajni\n- Pišeš kao pametan kolega koji šalje ličnu poruku, ne marketer koji šalje masovni mail\n- Svaka rečenica mora zarađivati svoje mesto — izbaci sve što ne pomera čitaoca napred\n- NIKAD ne koristiti: \"Nadam se da ste dobro\", \"Stupam u kontakt\", \"Samo sam hteo da se javim\"\n\nStruktura emaila (uvek):\n1. HOOK (1 rečenica) — otvori sa konkretnim pain pointom njihove industrije, ali ne preteruj sa brojkama. Neka pomisle \"kako znaju?\"\n2. BRIDGE (1–2 rečenice) — uvedi rešenje i poveži ga direktno sa pain pointom\n3. PROOF (1 rečenica) — jedan konkretan broj, ne pridev\n4. CTA (1 rečenica) — jedan low-friction zahtev. \"Vredi li baciti pogled?\" > \"Zakažite meeting\"\n\nPain pointovi po kategoriji (koristi kao hook):\n- Dentist/Dental clinic: ordinacije propuste 15–25% dolaznih poziva dnevno svaki izgubljen termin je vredan najmanje 50€\n- Doctor/Medical: klinike gube rezervacije kad je recepcija preopterećena, pacijenti spuste slušalicu i zovu konkurenciju\n- Health resort/Spa: gube rezervacije i upite dok je osoblje zauzeto sa tretmanima\n- Automotive: servisi gube rezervacije svaki put kad telefon zazvoni dok su mehaničari zauzeti\n- Za sve ostale: fokus na propuštene dolazne pozive koji koštaju leadove dok je osoblje nedostupno\n\nPravila outputa:\n- Telo emaila: 80–120 reči maksimum\n- Subject: 4–7 reči, mala slova, bez interpunkcije, specifično za firmu — NE opis funkcionalnosti\n- Koristi naziv firme prirodno u tekstu\n- Odgovori SAMO sa validnim JSON-om. Bez markdown, bez objašnjenja.\n\nPrimer savršenog outputa:\n{\n  \"subject\": \"propušteni pozivi u dental centru jovanović\",\n  \"body\": \"Dental Centar Jovanović propusti svaki treći poziv dok je tim zauzet s pacijentom — to nije samo propušten poziv, to je izgubljen termin.\\n\\nNapravili smo AI Recepcionara koji odgovori na svaki poziv za manje od 2 sekunde ili kada se niko ne javi, kvalifikuje pacijenta i direktno zakaže termin — 24/7, bez čekanja.\\n\\nOrdinacije koje ga koriste beleže 38% više zakazanih termina u prvih 30 dana.\\n\\nIma li smisla pokazati vam kako bi to izgledalo za vašu ordinaciju?\"\n}"
+            },
+            {
+              "content": "=Napiši cold email za ovu firmu:\n\nNaziv firme: {{ $json['Naziv firme'] }}\nKategorija: {{ $json.Kategorija }}\nGrad: {{ $json.Grad }}\nOcena: {{ $json.Ocena }} zvezda ({{ $json['Broj recenzija'] }} recenzija)\nWebsite: {{ $json.Website }}\n\nProizvod koji nudimo:\nAI Recepcioner od Horizen AI — glasovni agent koji odgovara na svaki dolazni poziv za manje od 2 sekunde, kvalifikuje pozivaoca i direktno zakazuje termine u kalendar prirodnim glasom. Bez čekanja, bez govorne pošte, bez propuštenih leadova.\n\nDokazi (izaberi 1–2 najrelevantnije za njihovu kategoriju):\n- 38% više zakazanih termina u proseku\n- Dostupan 24/7 uključujući večeri, vikende i praznike\n- Odgovara za manje od 2 sekunde\n- Nula propuštenih poziva\n- Integracija s postojećim kalendarima\n- Implementacija za 48 sati\n\nUputstvo:\n- Otvori sa pain pointom koji odgovara njihovoj kategoriji — neka deluje kao da znaš njihov biznis\n- Koristi naziv {{ $json['Naziv firme'] }} prirodno u tekstu\n- CTA mora biti low-friction — \"vredi li baciti pogled?\" ili \"ima li smisla pokazati vam demo?\" — NIKAD \"zakažite poziv\"\n- Subject mora biti specifičan za tu firmu\n- Sve piši na srpskom, latiničnim pismom\n\nOdgovori samo sa ovim JSON-om:\n{\n  \"subject\": \"subject line ovde\",\n  \"body\": \"telo emaila ovde\"\n}"
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "b0d0f816-ef98-4747-8377-a2ba101753d6",
+      "name": "Generate Email",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        832,
+        400
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "nlLdafI0eebBYVzo",
+          "name": "OpenAI account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Izvuci AI tekst iz Responses API formata\nconst aiContent = $json.output?.[0]?.content?.[0]?.text || '';\n\n// Lead podaci dolaze iz 'Take 1 Lead' nodea (pre OpenAI)\nconst lead = $('Take 1 Lead').item.json;\n\nlet parsed;\ntry {\n  const cleaned = aiContent.replace(/^```json\\n?|^```\\n?|\\n?```$/g, '').trim();\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  parsed = {\n    subject: `AI Recepcioner za ${lead['Naziv firme'] || 'vašu ordinaciju'}`,\n    body: aiContent\n  };\n}\n\nreturn {\n  row_number:    lead.row_number,\n  email:         lead['Email'] || '',\n  company:       lead['Naziv firme'] || '',\n  category:      lead['Kategorija'] || '',\n  city:          lead['Grad'] || '',\n  phone:         lead['Telefon'] || '',\n  email_subject: parsed.subject,\n  email_body:    parsed.body\n};"
+      },
+      "id": "85182790-0ef6-4935-8b03-82e26b5ed021",
+      "name": "Parse Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const body  = $json.email_body || '';\nconst email = $json.email || '';\nconst logo  = 'https://res.cloudinary.com/drpzkf5m5/image/upload/c_crop,w_1300,h_340/v1780351890/horizenaidesnologg_zyucv2.png';\n\n// Paragraf po paragraf — inline stilovi za Gmail kompatibilnost\nconst paragraphs = body\n  .split('\\n')\n  .filter(l => l.trim())\n  .map(l => `<p style=\"margin:0 0 18px;font-size:15px;line-height:1.75;color:#222;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif\">${l.trim()}</p>`)\n  .join('');\n\nconst html = `<!DOCTYPE html>\n<html lang=\"sr\">\n<head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"></head>\n<body style=\"margin:0;padding:0;background:#efefef;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif\">\n  <div style=\"width:100%;background:#efefef;padding:40px 0\">\n    <div style=\"max-width:560px;margin:0 auto;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)\">\n\n      <!-- Header -->\n      <div style=\"background:#0a0a0a;padding:28px 40px\">\n        <img src=\"${logo}\" alt=\"Horizen AI\" style=\"height:48px;width:auto;display:block\">\n      </div>\n\n      <!-- Accent bar -->\n      <div style=\"height:3px;background:linear-gradient(90deg,#7c6aff 0%,#a78bfa 100%)\"></div>\n\n      <!-- Body -->\n      <div style=\"padding:40px 40px 8px\">\n        ${paragraphs}\n      </div>\n\n      <!-- CTA -->\n      <div style=\"padding:16px 40px 40px\">\n        <a href=\"https://horizenai.com\" style=\"display:inline-block;background:#7c6aff;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:10px;font-size:15px;font-weight:600;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif\">Pogledaj kako funkcioniše →</a>\n      </div>\n\n      <!-- Footer -->\n      <div style=\"background:#f7f7f7;border-top:1px solid #e8e8e8;padding:22px 40px\">\n        <p style=\"font-size:12px;color:#aaa;margin:0;line-height:1.9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif\">\n          <strong style=\"color:#666\">Horizen AI</strong><br>\n          <a href=\"mailto:matija@horizenai.com\" style=\"color:#aaa;text-decoration:none\">matija@horizenai.com</a>\n          &nbsp;·&nbsp;\n          <a href=\"https://horizenai.com\" style=\"color:#aaa;text-decoration:none\">horizenai.com</a>\n          &nbsp;·&nbsp;\n          <a href=\"https://horizenai.com/unsubscribe?email=${encodeURIComponent(email)}\" style=\"color:#aaa;text-decoration:none\">Odjava</a>\n        </p>\n      </div>\n\n    </div>\n  </div>\n</body>\n</html>`;\n\nreturn { ...$json, email_body_html: html };"
+      },
+      "id": "90a56024-9ce0-4ed1-8d92-2870e21af8b9",
+      "name": "Build HTML Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ $json.email_subject }}",
+        "emailType": "html",
+        "message": "={{ $json.email_body_html }}",
+        "options": {
+          "replyTo": "matija@horizenai.com"
+        }
+      },
+      "id": "9bcdf090-bca1-44f2-87ce-9cea1f3a24e6",
+      "name": "Create Draft",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1568,
+        400
+      ],
+      "webhookId": "434a2a2c-ef79-4e0f-8229-11019c9a77cd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mVKkulWwMCpJ98Tw",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1TVnTBCoes7hH5KSMv9AppWvPO7dzHyOxrDmX1PVpfpM/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Лист1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "row_number": "={{ $('Parse Response').item.json.row_number }}",
+            "Kontaktiran": "true"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Naziv firme",
+              "displayName": "Naziv firme",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Kategorija",
+              "displayName": "Kategorija",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Telefon",
+              "displayName": "Telefon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Website",
+              "displayName": "Website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Adresa",
+              "displayName": "Adresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Grad",
+              "displayName": "Grad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Zemlja",
+              "displayName": "Zemlja",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ocena",
+              "displayName": "Ocena",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Broj recenzija",
+              "displayName": "Broj recenzija",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Google Maps URL",
+              "displayName": "Google Maps URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Opis",
+              "displayName": "Opis",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Datum scrape",
+              "displayName": "Datum scrape",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Kontaktiran",
+              "displayName": "Kontaktiran",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "4dd3e4d2-680a-486b-83cd-d925c730ef0a",
+      "name": "Mark as Contacted",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1792,
+        400
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zjzCsHAwejFAU1U4",
+          "name": "Google Sheets account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const log = {\n  timestamp: new Date().toISOString(),\n  email:   $json.email,\n  company: $json.company,\n  subject: $json.email_subject,\n  status:  'draft_created'\n};\nconsole.log('DRAFT CREATED:', JSON.stringify(log));\nreturn { success: true, ...log };"
+      },
+      "id": "f201faa3-6baf-48b3-a9f0-ac7bc3fe7f60",
+      "name": "Log",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        400
+      ]
+    }
+  ],
+  "pinData": {
+    "09:00": [
+      {
+        "json": {
+          "timestamp": "2026-06-01T17:50:26.031-04:00",
+          "Readable date": "June 1st 2026, 5:50:26 pm",
+          "Readable time": "5:50:26 pm",
+          "Day of week": "Monday",
+          "Year": "2026",
+          "Month": "June",
+          "Day of month": "01",
+          "Hour": "17",
+          "Minute": "50",
+          "Second": "26",
+          "Timezone": "America/New_York (UTC-04:00)"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Generate Email": [
+      {
+        "json": {
+          "id": "resp_007e5be3cbe9ab4e006a1dfea4ae8081a3af1a2b0fae105b6c",
+          "object": "response",
+          "created_at": 1780350628,
+          "status": "completed",
+          "background": false,
+          "billing": {
+            "payer": "developer"
+          },
+          "completed_at": 1780350631,
+          "frequency_penalty": 0,
+          "incomplete_details": null,
+          "instructions": null,
+          "max_output_tokens": null,
+          "max_tool_calls": null,
+          "model": "gpt-4.1-mini-2025-04-14",
+          "moderation": null,
+          "output": [
+            {
+              "id": "msg_007e5be3cbe9ab4e006a1dfea545c481a3911dc7cced073dca",
+              "type": "message",
+              "status": "completed",
+              "content": [
+                {
+                  "type": "output_text",
+                  "annotations": [],
+                  "logprobs": [],
+                  "text": "{\n  \"subject\": \"propušteni pozivi u dental centru jovanović\",\n  \"body\": \"Dental Centar Jovanović, stomatoloska ordinacija, propusti 35–40% dolaznih poziva tokom zahvata — svaki je izgubljen termin vredan desetine ili stotine evra.\\n\\nAI Recepcioner Horizen AI odgovara na svaki poziv za manje od 2 sekunde, kvalifikuje pacijente i automatski zakazuje termine bez čekanja ili govorne pošte.\\n\\nOrdinacije koje su ga uvele beleže 38% više zakazanih termina u prvih mesec dana.\\n\\nIma li smisla pokazati vam kako bi to funkcionisalo kod vas?\"\n}"
+                }
+              ],
+              "role": "assistant"
+            }
+          ],
+          "parallel_tool_calls": true,
+          "presence_penalty": 0,
+          "previous_response_id": null,
+          "prompt_cache_key": null,
+          "prompt_cache_retention": "in_memory",
+          "reasoning": {
+            "context": null,
+            "effort": null,
+            "summary": null
+          },
+          "safety_identifier": null,
+          "service_tier": "default",
+          "store": true,
+          "temperature": 1,
+          "text": {
+            "format": {
+              "type": "text"
+            },
+            "verbosity": "medium"
+          },
+          "tool_choice": "auto",
+          "tools": [],
+          "top_logprobs": 0,
+          "top_p": 1,
+          "truncation": "disabled",
+          "usage": {
+            "input_tokens": 1105,
+            "input_tokens_details": {
+              "cached_tokens": 0
+            },
+            "output_tokens": 167,
+            "output_tokens_details": {
+              "reasoning_tokens": 0
+            },
+            "total_tokens": 1272
+          },
+          "user": null,
+          "metadata": {}
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Get Leads": [
+      {
+        "json": {
+          "row_number": 2,
+          "Naziv firme": "Dental Centar Jovanović, stomatoloska ordinacija",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 60 6722292",
+          "Email": "",
+          "Website": "http://www.dentalcentarjovanovic.rs/",
+          "Adresa": "Vojislava Ilića 22, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.9,
+          "Broj recenzija": 224,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Dental%20Centar%20Jovanovi%C4%87%2C%20stomatoloska%20ordinacija&query_place_id=ChIJAWrjGmNxWkcReE0jzQhYP8g",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 3,
+          "Naziv firme": "Stomatološka ordinacija Dentam",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 11 3820374",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Metohijska 24, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 2,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatolo%C5%A1ka%20ordinacija%20Dentam&query_place_id=ChIJPbEC0X1wWkcR3tCeuVhinsM",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 4,
+          "Naziv firme": "Stomatološka ordinacija \"Bella Concept\"",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 64 1199688",
+          "Email": "",
+          "Website": "http://www.bellaconcept.rs/",
+          "Adresa": "Gospodara Vučića 140, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 59,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatolo%C5%A1ka%20ordinacija%20%22Bella%20Concept%22&query_place_id=ChIJNbhV3NZxWkcRT2aEPmQ7VQo",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 5,
+          "Naziv firme": "Zubarke",
+          "Kategorija": "Dentist",
+          "Telefon": "",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Danila Kiša 1, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.8,
+          "Broj recenzija": 25,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Zubarke&query_place_id=ChIJfdQ8PeRxWkcRLnDmuKw9v9E",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 6,
+          "Naziv firme": "Stomatološka ordinacija Furundžić",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 63 345363",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Veselina Masleše 22, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 10,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatolo%C5%A1ka%20ordinacija%20Furund%C5%BEi%C4%87&query_place_id=ChIJdQnlY9VxWkcRS5BOfK0C1cQ",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 7,
+          "Naziv firme": "Estetika Plus",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 11 2420411",
+          "Email": "",
+          "Website": "https://www.011info.com/stomatoloske-ordinacije/stomatoloska-ordinacija-estetika-plus",
+          "Adresa": "4A/3 VOJOSLAVA ILICA, 11104, Belgrade (Vracar), Belgrade county, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 11,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Estetika%20Plus&query_place_id=ChIJAQAAAHVwWkcRLiqB3nD-Bgs",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 8,
+          "Naziv firme": "Stomatološka ordinacija Dr Miljuš",
+          "Kategorija": "Dentist",
+          "Telefon": "",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Gročanska 32, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": "",
+          "Broj recenzija": 0,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatolo%C5%A1ka%20ordinacija%20Dr%20Milju%C5%A1&query_place_id=ChIJh9Bc9M5xWkcRgTnyr7Po6gg",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 9,
+          "Naziv firme": "Dežurna stomatološka ordinacija",
+          "Kategorija": "Dental clinic",
+          "Telefon": "+381 11 2406616",
+          "Email": "",
+          "Website": "http://www.dezurnizubar.com/",
+          "Adresa": "Mileševska 18, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.6,
+          "Broj recenzija": 42,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=De%C5%BEurna%20stomatolo%C5%A1ka%20ordinacija&query_place_id=ChIJF1oj7HVwWkcR_Xnmc4If6S8",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 10,
+          "Naziv firme": "Stomatološka ordinacija MIST Dent",
+          "Kategorija": "Oriental medicine clinic",
+          "Telefon": "+381 69 2519477",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Sazonova 116A, Beograd 11104, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 4,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatolo%C5%A1ka%20ordinacija%20MIST%20Dent&query_place_id=ChIJ9za3H4RxWkcRV-eb7B7svJQ",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 11,
+          "Naziv firme": "Tehno Dental d.o.o. Beograd",
+          "Kategorija": "Dental supply store",
+          "Telefon": "+381 11 4524448",
+          "Email": "",
+          "Website": "https://www.tehnodental.rs/",
+          "Adresa": "Gročanska 32, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 1,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Tehno%20Dental%20d.o.o.%20Beograd&query_place_id=ChIJWx0gTvpxWkcRu9Od32jC4r0",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 12,
+          "Naziv firme": "Krstic",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 63 7701486",
+          "Email": "",
+          "Website": "",
+          "Adresa": "23 METOHIJSKA, 11104, Belgrade (Vracar), Belgrade county, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": "",
+          "Broj recenzija": 0,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Krstic&query_place_id=ChIJq3kNWodwWkcRsnJLEOL8NUE",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 13,
+          "Naziv firme": "Stomatološka ordinacija \"Sina Dent\"",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 63 8250231",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Braće Radovanović 25/A1/2, Beograd 11050, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 27,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatolo%C5%A1ka%20ordinacija%20%22Sina%20Dent%22&query_place_id=ChIJTfR9bsNxWkcR0zZtZkITtHw",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 14,
+          "Naziv firme": "Stomatoloska ordinacija VARDENT",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 11 2448452",
+          "Email": "",
+          "Website": "https://vardent.rs/",
+          "Adresa": "Sazonova 37, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 29,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatoloska%20ordinacija%20VARDENT&query_place_id=ChIJ63_eJXdwWkcRGGfs7g8ezhk",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 15,
+          "Naziv firme": "Stomatološka ordinacija Zara Dent",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 64 9055469",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Baba Višnjina 27/1, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.9,
+          "Broj recenzija": 40,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatolo%C5%A1ka%20ordinacija%20Zara%20Dent&query_place_id=ChIJBb1rgkpxWkcRiPNhVcoytK8",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 16,
+          "Naziv firme": "Stomatološka ordinacija Lumident studio",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 65 3047208",
+          "Email": "",
+          "Website": "https://lumidentstudio.rs/",
+          "Adresa": "Hadži Melentijeva 85, Beograd 11118, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 68,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatolo%C5%A1ka%20ordinacija%20Lumident%20studio&query_place_id=ChIJNWpaBHFwWkcR5MEcvkpJVD0",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 17,
+          "Naziv firme": "Bright Smile Studio",
+          "Kategorija": "Dentist",
+          "Telefon": "",
+          "Email": "",
+          "Website": "https://brightsmilestudio.framer.website/",
+          "Adresa": "Generala Horvatovića 52, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 14,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Bright%20Smile%20Studio&query_place_id=ChIJxwAIgnxwWkcRPutld7lv80M",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 18,
+          "Naziv firme": "DigiDent011 snimanje zuba ortopan Vracar",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 66 5202200",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Šumatovačka 139, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 55,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=DigiDent011%20snimanje%20zuba%20ortopan%20Vracar&query_place_id=ChIJVWFfGcpxWkcRPu2eLLXONMo",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 19,
+          "Naziv firme": "Stomatološka ordinacija Mažestik Dent",
+          "Kategorija": "Doctor",
+          "Telefon": "+381 62 313355",
+          "Email": "",
+          "Website": "http://www.mazestikdent.rs/",
+          "Adresa": "Šumatovačka 132/1, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.4,
+          "Broj recenzija": 38,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatolo%C5%A1ka%20ordinacija%20Ma%C5%BEestik%20Dent&query_place_id=ChIJewCEfLJ6WkcRdHzXG7cgXEs",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 20,
+          "Naziv firme": "Hygieia",
+          "Kategorija": "Dental clinic",
+          "Telefon": "+381 65 9096699",
+          "Email": "",
+          "Website": "http://hygieia.rs/",
+          "Adresa": "Gospodara Vučića 124/2, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.8,
+          "Broj recenzija": 20,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Hygieia&query_place_id=ChIJf0N-dbhxWkcRUjv7m32EluY",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 21,
+          "Naziv firme": "DS Dent",
+          "Kategorija": "Dental clinic",
+          "Telefon": "+381 69 4010127",
+          "Email": "",
+          "Website": "https://dsdent.rs/kontakt/",
+          "Adresa": "Šumatovačka 132B, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.5,
+          "Broj recenzija": 32,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=DS%20Dent&query_place_id=ChIJ5ZjrSHpwWkcRossi3gN1644",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 22,
+          "Naziv firme": "BELGRADE DENTAL CLINIC DR VLADO INJAC",
+          "Kategorija": "Dental clinic",
+          "Telefon": "+381 63 318812",
+          "Email": "",
+          "Website": "http://www.drvladoinjac.com/",
+          "Adresa": "Gospodara Vučića 72, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 4,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=BELGRADE%20DENTAL%20CLINIC%20DR%20VLADO%20INJAC&query_place_id=ChIJT3FmIgBxWkcRr2BH9UV-JDU",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 23,
+          "Naziv firme": "Stomatološka ordinacija LAVID",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 60 5491723",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Gospodara Vučića 73, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 12,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatolo%C5%A1ka%20ordinacija%20LAVID&query_place_id=ChIJF728qXpwWkcRcU6CPZG2pY8",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 24,
+          "Naziv firme": "VASILIS CLINIC",
+          "Kategorija": "Health resort",
+          "Telefon": "+381 69 2829920",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Južni bulevar 88, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.4,
+          "Broj recenzija": 18,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=VASILIS%20CLINIC&query_place_id=ChIJKcki1ZZxWkcRdcSnGEDsdz4",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 25,
+          "Naziv firme": "Dr Zoran Savic",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 11 4441587",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Davida Pajića 3, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 3,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Dr%20Zoran%20Savic&query_place_id=ChIJaa-Z2HpwWkcRl7P1-n373sw",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 26,
+          "Naziv firme": "Stomatoloska Ordinacija Dr Zoran Cvetkovic Preduzetnik Beograd, Gospodara Vucica 178/I",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 11 415918",
+          "Email": "",
+          "Website": "",
+          "Adresa": "178/I GOSPODARA VUCICA, 11010, Belgrade (Vozdovac), Belgrade county, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": "",
+          "Broj recenzija": 0,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatoloska%20Ordinacija%20Dr%20Zoran%20Cvetkovic%20Preduzetnik%20Beograd%2C%20Gospodara%20Vucica%20178%2FI&query_place_id=ChIJzTurZHtwWkcRogqBM_3N3dY",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 27,
+          "Naziv firme": "Glamour Aesthetic - dr Maja Jevđević",
+          "Kategorija": "Health resort",
+          "Telefon": "+381 66 210251",
+          "Email": "",
+          "Website": "http://www.doktorkamaja.com/",
+          "Adresa": "Cerska 107, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.9,
+          "Broj recenzija": 63,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Glamour%20Aesthetic%20-%20dr%20Maja%20Jev%C4%91evi%C4%87&query_place_id=ChIJzRalNptvWkcRCyrOU288_Us",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 28,
+          "Naziv firme": "Čoleski dental centar",
+          "Kategorija": "Dental laboratory",
+          "Telefon": "+381 11 2476279",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Tikveška, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": "",
+          "Broj recenzija": 0,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=%C4%8Coleski%20dental%20centar&query_place_id=ChIJ61nXLmVwWkcRy4Gs4tB_F6o",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 29,
+          "Naziv firme": "Dental District",
+          "Kategorija": "Dental clinic",
+          "Telefon": "+381 60 6334519",
+          "Email": "",
+          "Website": "http://www.dentaldistrict.rs/",
+          "Adresa": "Gospodara Vučića 71, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 21,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Dental%20District&query_place_id=ChIJ93ZaC69xWkcRqtBbbTPx3dw",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 30,
+          "Naziv firme": "Stomatološka ordinacija Dentalia",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 11 6707826",
+          "Email": "",
+          "Website": "http://www.dentalia.rs/",
+          "Adresa": "Makenzijeva 35, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.9,
+          "Broj recenzija": 201,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatolo%C5%A1ka%20ordinacija%20Dentalia&query_place_id=ChIJryb-i6Z6WkcR5bQ3XEsBG-Y",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 31,
+          "Naziv firme": "Stomatološka ordinacija \"Dr.Tomic\"",
+          "Kategorija": "Doctor",
+          "Telefon": "+381 11 3863454",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Maksima Gorkog 3, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 1,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatolo%C5%A1ka%20ordinacija%20%22Dr.Tomic%22&query_place_id=ChIJ9740yYVxWkcRWAmG_P83W8M",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 32,
+          "Naziv firme": "Veneer centar stomatoloska ordinacija",
+          "Kategorija": "Dental clinic",
+          "Telefon": "+381 63 8333854",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Celjska 7, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 19,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Veneer%20centar%20stomatoloska%20ordinacija&query_place_id=ChIJZ4wgfABxWkcRH3dvuVetNzo",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 33,
+          "Naziv firme": "Stevanovic Dentistico",
+          "Kategorija": "Dental clinic",
+          "Telefon": "+381 65 2652008",
+          "Email": "",
+          "Website": "http://www.stevanovicdentistico.rs/",
+          "Adresa": "Šumatovačka 115, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 2,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stevanovic%20Dentistico&query_place_id=ChIJ2atfAnNwWkcRWwvcgtgQnEc",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 34,
+          "Naziv firme": "Zugic",
+          "Kategorija": "Dental clinic",
+          "Telefon": "+381 11 7839034",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Generala Rajevskog 1, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 12,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Zugic&query_place_id=ChIJBaik0nFwWkcR5poyd7FB6ko",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 35,
+          "Naziv firme": "JM Dental",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 69 2314777",
+          "Email": "",
+          "Website": "http://www.jmdental.rs/",
+          "Adresa": "Jovana Rajića 2, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 17,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=JM%20Dental&query_place_id=ChIJw008CtNxWkcRStI9Q5CnSrQ",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 36,
+          "Naziv firme": "Bloom Dental & Aesthetic",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 62 622866",
+          "Email": "",
+          "Website": "http://www.bloomdental.co.rs/",
+          "Adresa": "Gružanska 10, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.7,
+          "Broj recenzija": 67,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Bloom%20Dental%20%26%20Aesthetic&query_place_id=ChIJkVdu5BFxWkcRyO_xbQYFdh0",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 37,
+          "Naziv firme": "KRUNA DENT",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 60 5577886",
+          "Email": "",
+          "Website": "http://stomatologvracar.rs/",
+          "Adresa": "Vukice Mitrović broj 62, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.2,
+          "Broj recenzija": 44,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=KRUNA%20DENT&query_place_id=ChIJFzgSG3dwWkcRaUOlPADHNJo",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 38,
+          "Naziv firme": "Implant & Care",
+          "Kategorija": "",
+          "Telefon": "+381 69 699899",
+          "Email": "",
+          "Website": "http://www.implantandcare.com/",
+          "Adresa": "Todora od Stalaća 16, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 27,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Implant%20%26%20Care&query_place_id=ChIJ93enQHlwWkcRUHB44Apqseo",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 39,
+          "Naziv firme": "Dentim ++",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 11 3830089",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Mileševska 47, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.5,
+          "Broj recenzija": 8,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Dentim%20%2B%2B&query_place_id=ChIJVVVltHdwWkcRt9Jku2vSX_Y",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 40,
+          "Naziv firme": "Stomatološka ordinacija Sanja Bošković",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 69 4994474",
+          "Email": "",
+          "Website": "http://www.drsb.rs/",
+          "Adresa": "Sazonova 48, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 6,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stomatolo%C5%A1ka%20ordinacija%20Sanja%20Bo%C5%A1kovi%C4%87&query_place_id=ChIJHb4Z6C1xWkcR_zZcmnEtUC8",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 41,
+          "Naziv firme": "Zubbi",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 11 3445199",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Sazonova 10, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 4,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Zubbi&query_place_id=ChIJm6pnHXpwWkcRhphE47DEv00",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 42,
+          "Naziv firme": "Dan-Dent",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 11 3830604",
+          "Email": "",
+          "Website": "",
+          "Adresa": "44/4 Mileševska, 11104, Beograd (Vračar), Grad Beograd, 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4,
+          "Broj recenzija": 8,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Dan-Dent&query_place_id=ChIJ1RZpTHZwWkcREsd9FE_IdkE",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 43,
+          "Naziv firme": "Gracia Dent",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 64 8003448",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Maksima Gorkog 52/02, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 18,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Gracia%20Dent&query_place_id=ChIJa1gofAJxWkcRSUhqOUrLxaI",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 44,
+          "Naziv firme": "Dentalux",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 69 2441497",
+          "Email": "",
+          "Website": "https://www.dentalux.rs/",
+          "Adresa": "Beogradska 36, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.9,
+          "Broj recenzija": 746,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Dentalux&query_place_id=ChIJQTGdQ6F6WkcRHOJoL27VTCc",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 45,
+          "Naziv firme": "ARS Dentis",
+          "Kategorija": "Dental clinic",
+          "Telefon": "+381 11 4078342",
+          "Email": "",
+          "Website": "http://www.arsdentis.rs/",
+          "Adresa": "Timočka 1, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.3,
+          "Broj recenzija": 6,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=ARS%20Dentis&query_place_id=ChIJQWY6P3dwWkcRA1OG4xbrWeg",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 46,
+          "Naziv firme": "Dental office Lakčević Beograd",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 60 3440526",
+          "Email": "",
+          "Website": "https://ordinacijalakcevic.com/kontakt/",
+          "Adresa": "Daničareva, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 4,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Dental%20office%20Lak%C4%8Devi%C4%87%20Beograd&query_place_id=ChIJFUSo3HZwWkcRJ7Zl2EgLc-A",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 47,
+          "Naziv firme": "Stoma",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 63 7594004",
+          "Email": "",
+          "Website": "",
+          "Adresa": "56, Mileševska 11104, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 2,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Stoma&query_place_id=ChIJ1RZpTHZwWkcRpUJHHWCYi4Y",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 48,
+          "Naziv firme": "Apex",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 63 7758785",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Cara Nikolaja II 59, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4.3,
+          "Broj recenzija": 6,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Apex&query_place_id=ChIJw9FZcHRwWkcRrw-xp6-3AyY",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 49,
+          "Naziv firme": "Zubar Stoma",
+          "Kategorija": "Dentist",
+          "Telefon": "",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Mileševska 58, Beograd 11000, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": "",
+          "Broj recenzija": 0,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Zubar%20Stoma&query_place_id=ChIJc943WzNxWkcRGIcJbTCNDVc",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 50,
+          "Naziv firme": "Ivago",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 63 7854517",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Loznička 6, Beograd, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 4,
+          "Broj recenzija": 8,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=Ivago&query_place_id=ChIJ3xEiiJ16WkcRHyuV9D3hWyw",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "row_number": 51,
+          "Naziv firme": "MarSi Dental Studio",
+          "Kategorija": "Dentist",
+          "Telefon": "+381 65 2039835",
+          "Email": "",
+          "Website": "",
+          "Adresa": "Vojislava Ilića 21, Beograd 11050, Serbia",
+          "Grad": "Belgrade",
+          "Zemlja": "RS",
+          "Ocena": 5,
+          "Broj recenzija": 8,
+          "Google Maps URL": "https://www.google.com/maps/search/?api=1&query=MarSi%20Dental%20Studio&query_place_id=ChIJFUeu8I1xWkcRmWkXN0Eeu_U",
+          "Opis": "",
+          "Datum scrape": "2026-06-01",
+          "Kontaktiran": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "09:00": {
+      "main": [
+        [
+          {
+            "node": "Get Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "11:00": {
+      "main": [
+        [
+          {
+            "node": "Get Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "13:00": {
+      "main": [
+        [
+          {
+            "node": "Get Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "15:00": {
+      "main": [
+        [
+          {
+            "node": "Get Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "17:00": {
+      "main": [
+        [
+          {
+            "node": "Get Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Leads": {
+      "main": [
+        [
+          {
+            "node": "Filter: Has Email & Not Contacted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter: Has Email & Not Contacted": {
+      "main": [
+        [
+          {
+            "node": "Take 1 Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Take 1 Lead": {
+      "main": [
+        [
+          {
+            "node": "Generate Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Email": {
+      "main": [
+        [
+          {
+            "node": "Parse Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Response": {
+      "main": [
+        [
+          {
+            "node": "Build HTML Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build HTML Email": {
+      "main": [
+        [
+          {
+            "node": "Create Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Draft": {
+      "main": [
+        [
+          {
+            "node": "Mark as Contacted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark as Contacted": {
+      "main": [
+        [
+          {
+            "node": "Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "7b53d725-1f34-4790-b013-f3e1b1795532",
+  "meta": {
+    "instanceId": "bc1a87535e74e12ef3c0fc477e5c162c04ac00ff39cdf9dcfce8b90c24b1e40c"
+  },
+  "id": "SIe93PyOfscVSTcg",
+  "tags": []
+}

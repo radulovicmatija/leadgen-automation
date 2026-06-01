@@ -1,0 +1,12 @@
+# Never commit real lead data
+leads.csv
+leads_real.csv
+contacts.csv
+
+# n8n local config exports
+*.n8n.json
+!workflow.json
+
+# OS
+.DS_Store
+Thumbs.db
