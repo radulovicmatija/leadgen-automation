@@ -16,7 +16,7 @@ Built for [Horizen AI](https://horizenai.com) to generate outbound interest in t
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
 │                                                                     │
-│   ⏰  5 Schedule Triggers      09:00 · 11:00 · 13:00 · 15:00 · 17:00  │
+│   ⏰  5 Schedule Triggers     09:00 · 11:00 · 13:00 · 15:00 · 17:00 │
 │            │                   Monday – Friday                      │
 │            ▼                                                        │
 │   📊  Google Sheets            Read all rows from leads sheet       │
