@@ -7,7 +7,7 @@
 
 Fully automated outbound system that reads leads from Google Sheets, generates a personalized cold email in Serbian for each contact using GPT-4.1-mini, and saves it as a branded HTML draft in Gmail — 5 times per day, at different hours, zero manual work.
 
-Built for [Horizen AI](https://horizenai.com) to generate outbound interest in the AI Receptionist product.
+Built for [Horizen AI](https://horizen.rs) to generate outbound interest in the AI Receptionist product.
 
 ---
 
@@ -192,4 +192,4 @@ Requires an active n8n instance with three credentials:
 
 ---
 
-Built by [Horizen AI](https://horizenai.com) — AI systems that grow your business while you focus on the work only you can do.
+Built by [Horizen AI](https://horizen.rs) — AI systems that grow your business while you focus on the work only you can do.
