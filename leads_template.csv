@@ -1,6 +1,5 @@
-first_name,last_name,email,company,industry,job_title,contacted
-James,Carter,james@brightsidedental.com,Brightside Dental,Dentistry,Owner,
-Laura,Mitchell,laura@precisionauto.com,Precision Auto,Automotive,Director,
-Ryan,Thompson,ryan@primerealty.com,Prime Realty,Real Estate,Sales Manager,
-Sofia,Bennett,sofia@elitefit.com,Elite Fit,Fitness,Owner,
-Daniel,Park,daniel@parklaw.com,Park & Associates,Legal,Partner,
+Naziv firme,Kategorija,Telefon,Email,Website,Adresa,Grad,Zemlja,Ocena,Broj recenzija,Google Maps URL,Opis,Datum scrape,Kontaktiran
+Dental Centar Jovanović,Dentist,+381 60 123 4567,info@dcjovanovic.rs,https://dcjovanovic.rs,Bulevar kralja Aleksandra 73,Beograd,Srbija,4.8,224,,,,
+Auto Servis Petrović,Automotive,+381 64 111 2223,kontakt@aspetrovic.rs,,Vojvode Stepe 12,Novi Sad,Srbija,4.6,87,,,,
+Spa Centar Oaza,Health resort,+381 63 111 9876,rezervacije@spa-oaza.rs,https://spa-oaza.rs,Njegoševa 5,Vrnjačka Banja,Srbija,4.9,312,,,,
+Ordinacija Dr Nikolić,Doctor,+381 65 222 3334,ordinacija@drnikolic.rs,,Cara Dušana 28,Niš,Srbija,4.7,156,,,,

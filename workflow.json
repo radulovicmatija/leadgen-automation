@@ -6,8 +6,8 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 9,
-              "triggerAtMinute": 3
+              "field": "cronExpression",
+              "expression": "0 9 * * 1-5"
             }
           ]
         }
@@ -172,8 +172,7 @@
       "position": [
         464,
         400
-      ],
-      "disabled": true
+      ]
     },
     {
       "parameters": {},
@@ -198,10 +197,10 @@
           "values": [
             {
               "role": "system",
-              "content": "=Ti si ekspert za B2B cold email outreach. Pišeš kratke, personalizovane cold emailove na srpskom jeziku, latiničnim pismom.\n\nSTIL PISANJA:\n- Direktan, samopouzdan i human — nikad robotski ili prodajni\n- NIKAD ne koristiti em dash (—) ni en dash (–) — umesto toga koristi zarez, tačku ili novu rečenicu\n- Pišeš kao pametan kolega koji šalje ličnu poruku, ne marketer koji šalje masovni mail\n- Svaka rečenica mora zarađivati svoje mesto — izbaci sve što ne pomera čitaoca napred\n- NIKAD ne koristiti: \"Nadam se da ste dobro\", \"Stupam u kontakt\", \"Samo sam hteo da se javim\"\n\nSTRUKTURA EMAILA (uvek):\n1. HOOK (1 rečenica) — otvori sa industrijskim podatkom ili opservacijom koja deluje kao da poznaješ njihov biznis. NIKAD ne tvrdi da znaš njihov interni podatak. Koristi formu \"ordinacije poput vaše\", \"većina klinika u regionu\", \"istraživanja pokazuju\" — ne \"vi propuštate\".\n2. BRIDGE (1–2 rečenice) — uvedi rešenje i poveži ga direktno sa pain pointom\n3. PROOF (1 rečenica) — jedan konkretan broj sa kontekstom (vremenski okvir ili uzorak). Nikad goli procenat bez objašnjenja.\n4. CTA (1 rečenica) — jedan low-friction zahtev koji ne zvuči kao prodajni poziv\n\nPAIN POINTOVI PO KATEGORIJI (koristi kao hook):\n- Dentist/Dental clinic: istraživanja pokazuju da stomatološke ordinacije propuste u proseku svaki peti dolazni poziv dok je tim zauzet s pacijentom — a svaki izgubljen termin vredi najmanje 50€\n- Doctor/Medical: kad je recepcija preopterećena, pacijenti ne čekaju — spuste slušalicu i zovu prvu sledeću kliniku na Google Maps-u\n- Health resort/Spa: većina rezervacija dolazi telefonom, a najviše poziva stiže upravo kad je osoblje usred tretmana\n- Automotive: servisi gube rezervacije svaki put kad telefon zazvoni dok su mehaničari pod autom\n- Za sve ostale: propušteni dolazni poziv dok je osoblje nedostupno direktno znači izgubljen lead\n\nPRAVILA ZA PERSONALIZACIJU:\n- Ako firma ima ocenu 4.5 ili više: pomeni reputaciju kao nešto što vredi zaštititi. Primer: \"Ordinacija sa 4.8 zvezda ne može sebi da priušti da izgubi pacijenta zbog zauzetog telefona.\"\n- Ako firma ima ocenu ispod 4.5 ili manje od 20 recenzija: ne komentariši ocenu uopšte\n- Uvek koristi naziv firme prirodno — jednom u hooку ili bridgeu, ne ponavljaj ga mehanički\n\nPRAVILA ZA PROOF:\n- Uvek dodaj kontekst uz broj: \"u prvih 30 dana\", \"kod prvih 12 klijenata\", \"prosek u prvom kvartalu\"\n- Primer dobrog: \"Klinike koje ga koriste beleže 38% više zakazanih termina u prvih 30 dana.\"\n- Primer lošeg: \"Klinike beleže 38% više termina.\" — goli broj bez konteksta deluje izmišljeno\n\nPRAVILA ZA CTA:\n- Uvek low-friction — čitalac treba da može da odgovori sa jednom rečju\n- Dobro: \"Ima li smisla pokazati vam kako bi izgledalo za [naziv firme]?\"\n- Dobro: \"Vredi li baciti pogled, demo traje par minuta?\"\n- Zabranjeno: \"Zakažite poziv\", \"Hajde da organizujemo meeting\", \"Slobodni ste da me kontaktirate\"\n- Nikad ne nude više od jedne akcije u CTA\n\nPRAVILA ZA SUBJECT LINE:\n- 4–7 reči, mala slova, bez interpunkcije\n- Mora biti specifičan za tu firmu ili situaciju — ne opis funkcionalnosti\n- Dobro: \"kad zazvoni a niko ne stigne\", \"termini koje dental centar jovanović gubi\"\n- Zabranjeno: emoji, capslock, reči \"besplatno\", \"ekskluzivno\", \"revolucionarno\"\n- Zabranjeno: subject koji zvuči kao newsletter ili promocija\n\nPRAVILA ZA DUŽINU:\n- Telo emaila: 80–120 reči maksimum\n- Svaka rečenica koja ne dodaje vrednost — briše se\n\nPRIMER DOBROG OUTPUTA:\n{\n  \"subject\": \"termini koje dental centar jovanović gubi\",\n  \"body\": \"Stomatološke ordinacije u proseku propuste svaki peti dolazni poziv dok je tim zauzet s pacijentom — a svaka ta propuštena slušalica je izgubljen termin.\\n\\nDental Centar Jovanović ima 4.8 zvezda — šteta bi bilo da pacijent ode konkurenciji samo zato što niko nije podigao slušalicu.\\n\\nNapravili smo AI Recepcionera koji odgovori na svaki poziv za manje od 2 sekunde, kvalifikuje pacijenta i direktno zakaže termin — 24/7, bez čekanja.\\n\\nOrdinacije koje ga koriste beleže 38% više zakazanih termina u prvih 30 dana.\\n\\nIma li smisla pokazati vam kako bi izgledalo za vašu ordinaciju — demo traje 8 minuta?\"\n}\n\nPRIMER LOŠEG OUTPUTA (nikad ovako):\n{\n  \"subject\": \"AI rešenje za vašu ordinaciju\",\n  \"body\": \"Nadam se da ste dobro. Pišem vam jer nudimo revolucionarno AI rešenje koje transformiše način na koji ordinacije primaju pozive. Dental Centar Jovanović propušta 15-25% poziva dnevno. Naš sistem to rešava. Zakažite demo poziv sa nama.\"\n}\nZašto je loše: generički subject, zabranjena uvodna fraza, interni podatak koji ne možeš znati, CTA koji traži previše.\n\nOUTPUT FORMAT:\nOdgovori SAMO sa validnim JSON-om. Bez markdown, bez objašnjenja, bez teksta pre ili posle JSON-a.\n{\n  \"subject\": \"subject line ovde\",\n  \"body\": \"telo emaila ovde\"\n}"
+              "content": "=Ti si ekspert za B2B cold email outreach. Pišeš kratke, personalizovane cold emailove na srpskom jeziku, latiničnim pismom.\n\nFORMAT:\n- Čist tekst (plain text). Bez HTML-a, bez markdown-a, bez podebljanih reči, bez emoji-ja.\n- Email mora da izgleda kao da ga je vlasnik agencije lično otkucao, ne kao kampanja.\n- Pasusi razdvojeni praznim redom. Maksimalno 2 rečenice po pasusu.\n\nSTIL PISANJA:\n- Direktan, samopouzdan i ljudski, nikad robotski ili prodajni.\n- NIKAD ne koristi em dash (—) ni en dash (–). Umesto toga zarez, tačka ili nova rečenica.\n- Pišeš kao pametan kolega koji šalje ličnu poruku, ne kao marketer koji šalje masovni mail.\n- Svaka rečenica mora da zaradi svoje mesto. Izbaci sve što ne pomera čitaoca napred.\n- NIKAD ne koristi: \"Nadam se da ste dobro\", \"Stupam u kontakt\", \"Samo sam hteo da se javim\".\n\nSTRUKTURA EMAILA (uvek ovim redom):\n1. POZDRAV: prvi red je tačno \"Dobar dan,\" pa prazan red.\n2. HOOK (1 rečenica): industrijski podatak ili opservacija koja deluje kao da poznaješ njihov biznis. NIKAD ne tvrdi da znaš njihov interni podatak. Koristi formu \"ordinacije poput vaše\", \"većina klinika u regionu\", \"istraživanja pokazuju\", nikad \"vi propuštate\".\n3. BRIDGE (1 do 2 rečenice): uvedi rešenje i poveži ga direktno sa pain pointom.\n4. PROOF (1 rečenica): jedan konkretan broj sa kontekstom (vremenski okvir ili uzorak). Nikad goli procenat bez objašnjenja.\n5. CTA (1 rečenica): jedno low-friction pitanje na koje je lako odgovoriti.\n\nBEZ potpisa i BEZ pozdrava na kraju (bez \"Srdačan pozdrav\", bez imena). Potpis se dodaje automatski posle tvog teksta.\n\nPAIN POINTOVI PO KATEGORIJI (koristi kao hook):\n- Dentist/Dental clinic: istraživanja pokazuju da stomatološke ordinacije propuste u proseku svaki peti dolazni poziv dok je tim zauzet s pacijentom, a svaki izgubljen termin vredi najmanje 50 evra\n- Doctor/Medical: kad je recepcija preopterećena, pacijenti ne čekaju. Spuste slušalicu i zovu prvu sledeću kliniku na Google Maps-u\n- Health resort/Spa: većina rezervacija dolazi telefonom, a najviše poziva stiže upravo kad je osoblje usred tretmana\n- Automotive: servisi gube rezervacije svaki put kad telefon zazvoni dok su mehaničari pod autom\n- Za sve ostale: propušten dolazni poziv dok je osoblje nedostupno direktno znači izgubljen lead\n\nPRAVILA ZA PERSONALIZACIJU:\n- Ako firma ima ocenu 4.5 ili više: pomeni reputaciju kao nešto što vredi zaštititi. Primer: \"Ordinacija sa 4.8 zvezda ne može sebi da priušti da izgubi pacijenta zbog zauzetog telefona.\"\n- Ako firma ima ocenu ispod 4.5 ili manje od 20 recenzija: ne komentariši ocenu uopšte.\n- Uvek koristi naziv firme prirodno, jednom u hooku ili bridgeu. Ne ponavljaj ga mehanički.\n\nPRAVILA ZA PROOF:\n- Uvek dodaj kontekst uz broj: \"u prvih 30 dana\", \"kod prvih 12 klijenata\", \"prosek u prvom kvartalu\".\n- Primer dobrog: \"Klinike koje ga koriste beleže 38% više zakazanih termina u prvih 30 dana.\"\n- Primer lošeg: \"Klinike beleže 38% više termina.\" Goli broj bez konteksta deluje izmišljeno.\n\nPRAVILA ZA CTA:\n- Uvek low-friction. Čitalac treba da može da odgovori jednom rečju.\n- Dobro: \"Ima li smisla da vam pokažem kako bi izgledalo za [naziv firme]? Demo traje 8 minuta.\"\n- Dobro: \"Vredi li baciti pogled? Demo traje par minuta.\"\n- Zabranjeno: \"Zakažite poziv\", \"Hajde da organizujemo meeting\", \"Slobodni ste da me kontaktirate\".\n- Nikad ne nudi više od jedne akcije u CTA. Nikad ne stavljaj link.\n\nPRAVILA ZA SUBJECT LINE:\n- 4 do 7 reči, mala slova, bez interpunkcije.\n- Mora biti specifičan za tu firmu ili situaciju, ne opis funkcionalnosti.\n- Dobro: \"kad zazvoni a niko ne stigne\", \"termini koje dental centar jovanović gubi\"\n- Zabranjeno: emoji, capslock, reči \"besplatno\", \"ekskluzivno\", \"revolucionarno\".\n- Zabranjeno: subject koji zvuči kao newsletter ili promocija.\n\nDUŽINA:\n- Telo emaila: 70 do 110 reči. Svaka rečenica koja ne dodaje vrednost se briše.\n\nPRIMER DOBROG OUTPUTA:\n{\n  \"subject\": \"termini koje dental centar jovanović gubi\",\n  \"body\": \"Dobar dan,\\n\\nStomatološke ordinacije u proseku propuste svaki peti dolazni poziv dok je tim zauzet s pacijentom. Svaka ta propuštena slušalica je po pravilu izgubljen termin.\\n\\nDental Centar Jovanović ima 4.8 zvezda. Šteta bi bilo da pacijent ode konkurenciji samo zato što niko nije stigao da se javi.\\n\\nZato smo napravili AI Recepcionera koji odgovori na svaki poziv za manje od 2 sekunde, kvalifikuje pacijenta i direktno zakaže termin, 24/7.\\n\\nOrdinacije koje ga koriste beleže 38% više zakazanih termina u prvih 30 dana.\\n\\nIma li smisla da vam pokažem kako bi izgledalo za vašu ordinaciju? Demo traje 8 minuta.\"\n}\n\nPRIMER LOŠEG OUTPUTA (nikad ovako):\n{\n  \"subject\": \"AI rešenje za vašu ordinaciju\",\n  \"body\": \"Nadam se da ste dobro. Pišem vam jer nudimo revolucionarno AI rešenje koje transformiše način na koji ordinacije primaju pozive. Dental Centar Jovanović propušta 15-25% poziva dnevno. Naš sistem to rešava. Zakažite demo poziv sa nama.\"\n}\nZašto je loše: generički subject, zabranjena uvodna fraza, tvrdi da zna njihov interni podatak, CTA traži previše.\n\nOUTPUT FORMAT:\nOdgovori SAMO validnim JSON-om. Bez markdown ograda, bez objašnjenja, bez teksta pre ili posle JSON-a.\n{\n  \"subject\": \"subject line ovde\",\n  \"body\": \"telo emaila ovde\"\n}"
             },
             {
-              "content": "=Napiši cold email za ovu firmu:\n\nNaziv firme: {{ $json['Naziv firme'] }}\nKategorija: {{ $json.Kategorija }}\nGrad: {{ $json.Grad }}\nOcena: {{ $json.Ocena }} zvezda ({{ $json['Broj recenzija'] }} recenzija)\nWebsite: {{ $json.Website }}\n\nProizvod koji nudimo:\nAI Recepcioner od Horizen AI — glasovni agent koji odgovara na svaki dolazni poziv za manje od 2 sekunde, kvalifikuje pozivaoca i direktno zakazuje termine u kalendar prirodnim glasom. Bez čekanja, bez govorne pošte, bez propuštenih leadova.\n\nDokazi — izaberi 1 koji je najrelevantiniji za njihovu kategoriju:\n- 38% više zakazanih termina u prvih 30 dana (prosek kod prvih 12 klijenata)\n- Dostupan 24/7 uključujući večeri, vikende i praznike\n- Odgovara za manje od 2 sekunde\n- Nula propuštenih poziva\n- Implementacija za 48 sati\n\nUputstvo za personalizaciju:\n- Hook otvori sa pain pointom koji odgovara kategoriji iz system prompta — koristi industrijski podatak, ne tvrdi da znaš njihov interni podatak\n- Ako je ocena 4.5 ili više: ugradi reputaciju u hook ili bridge kao razlog zašto propušteni poziv posebno boli\n- Ako je ocena ispod 4.5 ili broj recenzija ispod 20: ne pominjati ocenu\n- Koristi naziv {{ $json['Naziv firme'] }} prirodno — jednom, ne ponavljaj\n- CTA mora biti low-friction i sadržati vremenski okvir: \"demo traje 8 minuta\"\n- Subject mora biti specifičan za ovu firmu i situaciju, ne generički opis proizvoda\n\nOdgovori samo sa ovim JSON-om, bez ikakvog dodatnog teksta:\n{\n  \"subject\": \"subject line ovde\",\n  \"body\": \"telo emaila ovde\"\n}"
+              "content": "=Napiši cold email za ovu firmu:\n\nNaziv firme: {{ $json['Naziv firme'] }}\nKategorija: {{ $json.Kategorija }}\nGrad: {{ $json.Grad }}\nOcena: {{ $json.Ocena }} zvezda ({{ $json['Broj recenzija'] }} recenzija)\nWebsite: {{ $json.Website }}\n\nProizvod koji nudimo:\nAI Recepcioner od Horizen AI. Glasovni agent koji odgovara na svaki dolazni poziv za manje od 2 sekunde, kvalifikuje pozivaoca i direktno zakazuje termine u kalendar prirodnim glasom. Bez čekanja, bez govorne pošte, bez propuštenih leadova.\n\nDokazi, izaberi 1 koji je najrelevantniji za njihovu kategoriju:\n- 38% više zakazanih termina u prvih 30 dana (prosek kod prvih 12 klijenata)\n- Dostupan 24/7 uključujući večeri, vikende i praznike\n- Odgovara za manje od 2 sekunde\n- Nula propuštenih poziva\n- Implementacija za 48 sati\n\nUputstvo za personalizaciju:\n- Hook otvori sa pain pointom koji odgovara kategoriji iz system prompta. Koristi industrijski podatak, ne tvrdi da znaš njihov interni podatak.\n- Ako je ocena 4.5 ili više: ugradi reputaciju u hook ili bridge kao razlog zašto propušteni poziv posebno boli.\n- Ako je ocena ispod 4.5 ili broj recenzija ispod 20: ne pominji ocenu.\n- Koristi naziv {{ $json['Naziv firme'] }} prirodno, jednom, ne ponavljaj.\n- CTA mora biti low-friction i da sadrži vremenski okvir: \"demo traje 8 minuta\".\n- Subject mora biti specifičan za ovu firmu i situaciju, ne generički opis proizvoda.\n- Telo je čist tekst, počinje sa \"Dobar dan,\" i NEMA potpis na kraju.\n\nOdgovori samo ovim JSON-om, bez ikakvog dodatnog teksta:\n{\n  \"subject\": \"subject line ovde\",\n  \"body\": \"telo emaila ovde\"\n}"
             }
           ]
         },
@@ -227,7 +226,7 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "// Izvuci AI tekst iz Responses API formata\nconst aiContent = $json.output?.[0]?.content?.[0]?.text || '';\n\n// Lead podaci dolaze iz 'Take 1 Lead' nodea (pre OpenAI)\nconst lead = $('Take 1 Lead').item.json;\n\nlet parsed;\ntry {\n  const cleaned = aiContent.replace(/^```json\\n?|^```\\n?|\\n?```$/g, '').trim();\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  parsed = {\n    subject: `AI Recepcioner za ${lead['Naziv firme'] || 'vašu ordinaciju'}`,\n    body: aiContent\n  };\n}\n\nreturn {\n  row_number:    lead.row_number,\n  email:         lead['Email'] || '',\n  company:       lead['Naziv firme'] || '',\n  category:      lead['Kategorija'] || '',\n  city:          lead['Grad'] || '',\n  phone:         lead['Telefon'] || '',\n  email_subject: parsed.subject,\n  email_body:    parsed.body\n};"
+        "jsCode": "// Izvuci AI tekst iz Responses API formata\nconst aiContent = $json.output?.[0]?.content?.[0]?.text || '';\n\n// Lead podaci dolaze iz 'Take 1 Lead' nodea (pre OpenAI)\nconst lead = $('Take 1 Lead').item.json;\n\nlet parsed;\ntry {\n  const cleaned = aiContent.replace(/^```json\\n?|^```\\n?|\\n?```$/g, '').trim();\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  parsed = {\n    subject: `pitanje za ${lead['Naziv firme'] || 'vašu firmu'}`,\n    body: aiContent\n  };\n}\n\nreturn {\n  row_number:    lead.row_number,\n  email:         lead['Email'] || '',\n  company:       lead['Naziv firme'] || '',\n  category:      lead['Kategorija'] || '',\n  city:          lead['Grad'] || '',\n  phone:         lead['Telefon'] || '',\n  email_subject: parsed.subject,\n  email_body:    parsed.body\n};"
       },
       "id": "85182790-0ef6-4935-8b03-82e26b5ed021",
       "name": "Parse Response",
@@ -241,10 +240,10 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const body  = $json.email_body || '';\nconst email = $json.email || '';\nconst logo  = 'https://res.cloudinary.com/drpzkf5m5/image/upload/v1780351890/horizenaidesnologg_zyucv2.png';\n\nconst paragraphs = body\n  .split('\\n')\n  .filter(l => l.trim())\n  .map(l => `<p style=\"margin:0 0 16px;font-size:15px;line-height:1.7;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif\">${l.trim()}</p>`)\n  .join('');\n\nconst html = `<!DOCTYPE html>\n<html lang=\"sr\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n  <meta name=\"color-scheme\" content=\"light\">\n  <style>\n    @media only screen and (max-width:600px){\n      .hdr{padding:14px 24px!important}\n      .bd{padding:24px 24px 4px!important}\n      .ctaw{padding:8px 24px 28px!important}\n      .ftr{padding:16px 24px!important}\n    }\n    @media (prefers-color-scheme:dark){\n      .hdr{background:#0a0a0a!important}\n    }\n    [data-ogsc] .hdr{background:#0a0a0a!important}\n  </style>\n</head>\n<body style=\"margin:0;padding:20px;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif\">\n\n  <div style=\"border:1px solid rgba(124,106,255,0.3);border-radius:14px;overflow:hidden\">\n\n    <!-- Header -->\n    <div class=\"hdr\" style=\"background:#0a0a0a;padding:3px 32px\">\n      <img src=\"${logo}\" alt=\"Horizen AI\" width=\"150\"\n           style=\"width:150px;height:auto;display:block\">\n    </div>\n\n    <!-- Accent -->\n    <div style=\"height:3px;background:linear-gradient(90deg,#7c6aff,#a78bfa)\"></div>\n\n    <!-- Body -->\n    <div class=\"bd\" style=\"background:#fafafa;padding:32px 36px 4px\">\n      ${paragraphs}\n    </div>\n\n    <!-- CTA -->\n    <div class=\"ctaw\" style=\"background:#fafafa;padding:12px 36px 32px\">\n      <a href=\"https://horizen.rs\"\n         style=\"display:inline-block;background:#7c6aff;color:#ffffff;text-decoration:none;padding:13px 26px;border-radius:9px;font-size:15px;font-weight:600;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif\">\n        Pogledaj kako funkcioniše →\n      </a>\n    </div>\n\n    <!-- Footer -->\n    <div class=\"ftr\" style=\"background:#f0f0f0;border-top:1px solid #e0e0e0;padding:18px 36px\">\n      <p style=\"font-size:12px;color:#aaa;margin:0;line-height:1.9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif\">\n        <strong style=\"color:#666\">Horizen AI</strong><br>\n        <a href=\"mailto:matija@horizen.rs\" style=\"color:#aaa;text-decoration:none\">matija@horizen.rs</a>\n        &nbsp;·&nbsp;\n        <a href=\"https://horizen.rs\" style=\"color:#aaa;text-decoration:none\">horizen.rs</a>\n        &nbsp;·&nbsp;\n        <a href=\"https://horizen.rs/unsubscribe?email=${encodeURIComponent(email)}\" style=\"color:#aaa;text-decoration:none\">Matija Radulović</a>\n      </p>\n    </div>\n\n  </div>\n\n</body>\n</html>`;\n\nreturn { ...$json, email_body_html: html };"
+        "jsCode": "// AI telo + potpis = finalni plain text email\nconst body = ($json.email_body || '').trim();\n\nconst signature = [\n  'Srdačan pozdrav,',\n  'Matija Radulović',\n  'Horizen AI · horizen.rs'\n].join('\\n');\n\nconst ps = 'P.S. Ako vam ovo nije relevantno, samo odgovorite \"ne\" i neću vas više pisati.';\n\nreturn { ...$json, email_body_text: `${body}\\n\\n${signature}\\n\\n${ps}` };"
       },
       "id": "90a56024-9ce0-4ed1-8d92-2870e21af8b9",
-      "name": "Build HTML Email",
+      "name": "Build Email",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
@@ -256,10 +255,11 @@
       "parameters": {
         "resource": "draft",
         "subject": "={{ $json.email_subject }}",
-        "emailType": "html",
-        "message": "={{ $json.email_body_html }}",
+        "emailType": "text",
+        "message": "={{ $json.email_body_text }}",
         "options": {
-          "replyTo": "matija@horizenai.com"
+          "sendTo": "={{ $json.email }}",
+          "replyTo": "matija@horizen.rs"
         }
       },
       "id": "9bcdf090-bca1-44f2-87ce-9cea1f3a24e6",
@@ -474,7 +474,7 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "const log = {\n  timestamp: new Date().toISOString(),\n  email:   $json.email,\n  company: $json.company,\n  subject: $json.email_subject,\n  status:  'draft_created'\n};\nconsole.log('DRAFT CREATED:', JSON.stringify(log));\nreturn { success: true, ...log };"
+        "jsCode": "const d = $('Parse Response').item.json;\n\nconst log = {\n  timestamp: new Date().toISOString(),\n  email:   d.email,\n  company: d.company,\n  subject: d.email_subject,\n  status:  'draft_created'\n};\nconsole.log('DRAFT CREATED:', JSON.stringify(log));\nreturn { success: true, ...log };"
       },
       "id": "f201faa3-6baf-48b3-a9f0-ac7bc3fe7f60",
       "name": "Log",
@@ -591,18 +591,7 @@
       "main": [
         [
           {
-            "node": "Build HTML Email",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Build HTML Email": {
-      "main": [
-        [
-          {
-            "node": "Create Draft",
+            "node": "Build Email",
             "type": "main",
             "index": 0
           }
@@ -625,6 +614,17 @@
         [
           {
             "node": "Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Email": {
+      "main": [
+        [
+          {
+            "node": "Create Draft",
             "type": "main",
             "index": 0
           }
