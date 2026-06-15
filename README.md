@@ -3,9 +3,9 @@
 ![n8n](https://img.shields.io/badge/built%20with-n8n-EA4B71?style=flat-square&logo=n8n&logoColor=white)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4.1--mini-412991?style=flat-square&logo=openai&logoColor=white)
 ![Google Sheets](https://img.shields.io/badge/Google%20Sheets-leads-34A853?style=flat-square&logo=googlesheets&logoColor=white)
-![Gmail](https://img.shields.io/badge/Gmail-drafts-EA4335?style=flat-square&logo=gmail&logoColor=white)
+![Resend](https://img.shields.io/badge/Resend-send-000000?style=flat-square&logo=resend&logoColor=white)
 
-Fully automated outbound system that reads leads from Google Sheets, generates a personalized cold email in Serbian for each contact using GPT-4.1-mini, and saves it as a plain-text draft in Gmail — 5 times per day, at different hours, zero manual work.
+Fully automated outbound system that reads leads from Google Sheets, generates a personalized cold email in Serbian for each contact using GPT-4.1-mini, and sends it from your own domain via the Resend API — 5 times per day, at different hours, zero manual work.
 
 Built for [Horizen AI](https://horizen.rs) to generate outbound interest in the AI Receptionist product.
 
@@ -56,8 +56,8 @@ No links in the body either (links are a spam signal in cold email) — only the
 │   ✍️  Build Email              Append signature + opt-out line      │
 │            │                   Pure plain text, no HTML             │
 │            ▼                                                        │
-│   📨  Gmail: Create Draft      Saved to Drafts, recipient + subject │
-│            │                   pre-filled — review, then hit Send   │
+│   📨  Send via Resend          POST to Resend API, sent from        │
+│            │                   matija@horizen.rs (verified domain)  │
 │            ▼                                                        │
 │   ✅  Mark as Contacted        Updates Kontaktiran = true in sheet  │
 │            │                                                        │
@@ -67,9 +67,9 @@ No links in the body either (links are a spam signal in cold email) — only the
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-**Cost:** ~$0.01 per email (GPT-4.1-mini)
+**Cost:** ~$0.01 per email (GPT-4.1-mini) + Resend free tier (3,000 emails/mo)
 **Daily volume:** 5 emails/day — one per trigger, spread across working hours
-**Output:** Gmail Drafts — a human reviews and presses Send, which also keeps sending patterns natural
+**Delivery:** Sent from your own domain via Resend; replies land in your normal inbox (domain MX is unchanged)
 
 ---
 
@@ -152,7 +152,7 @@ The P.S. opt-out line matters: it dramatically reduces spam complaints (people r
 | Generate Email | OpenAI (LangChain) | GPT-4.1-mini writes personalized email |
 | Parse Response | Code (JS) | Extract JSON, handle parse errors |
 | Build Email | Code (JS) | Append signature + opt-out, output plain text |
-| Create Draft | Gmail | Save to Drafts — recipient, subject and body pre-filled |
+| Send via Resend | HTTP Request | POST to Resend API — sends from your verified domain |
 | Mark as Contacted | Google Sheets | Set `Kontaktiran = true` for the processed row |
 | Log | Code (JS) | Write result to n8n execution log |
 
@@ -172,7 +172,7 @@ The workflow reads from a sheet with these columns (see [`leads_template.csv`](l
 | `Grad` | City |
 | `Ocena` | Star rating |
 | `Broj recenzija` | Number of reviews |
-| `Kontaktiran` | Leave empty — automatically set to `true` after email is drafted |
+| `Kontaktiran` | Leave empty — automatically set to `true` after email is sent |
 
 ---
 
@@ -184,21 +184,35 @@ Requires an active n8n instance with three credentials:
 |---|---|
 | Google Sheets OAuth2 | Get Leads · Mark as Contacted |
 | OpenAI API | Generate Email |
-| Gmail OAuth2 | Create Draft |
+| HTTP Header Auth (Resend) | Send via Resend |
 
-**1.** Import `workflow.json` into n8n
+### Resend setup (one-time)
 
-**2.** In **Get Leads** and **Mark as Contacted** — select your spreadsheet and sheet tab
+**1.** Create an account at [resend.com](https://resend.com) and add your domain (`horizen.rs`)
 
-**3.** Connect the three credentials to their nodes
+**2.** Resend gives you DNS records (SPF, DKIM, DMARC) — add them at your domain registrar and wait for verification (usually minutes). Without this, `from: matija@horizen.rs` will be rejected.
 
-**4.** Add a `Kontaktiran` column to your Google Sheet (leave all rows empty initially)
+**3.** Create an API key (starts with `re_`)
 
-**5.** Make sure the `Email` column is populated — rows without an email are skipped
+**4.** In n8n, create a **Header Auth** credential named `Resend API`:
+- **Name:** `Authorization`
+- **Value:** `Bearer re_your_api_key_here`
 
-**6.** Activate the workflow
+### Workflow setup
 
-> **Deliverability tip:** before scaling volume, set up SPF, DKIM and DMARC on your sending domain, and keep volume at 5–10/day for the first few weeks if the mailbox is fresh.
+**5.** Import `workflow.json` into n8n
+
+**6.** In **Get Leads** and **Mark as Contacted** — select your spreadsheet and sheet tab
+
+**7.** Connect the three credentials to their nodes (the Resend key goes on **Send via Resend**)
+
+**8.** Add a `Kontaktiran` column to your Google Sheet (leave all rows empty initially)
+
+**9.** Make sure the `Email` column is populated — rows without an email are skipped
+
+**10.** Activate the workflow
+
+> **Deliverability tip:** domain verification (SPF/DKIM/DMARC) is mandatory for Resend, not optional. Keep volume at 5–10/day for the first few weeks while the domain warms up.
 
 ---
 
@@ -207,6 +221,7 @@ Requires an active n8n instance with three credentials:
 | | |
 |---|---|
 | Per email | ~$0.01 (GPT-4.1-mini) |
+| Resend | Free up to 3,000 emails/month |
 | 5 emails/day · 20 workdays | **~$1/month** |
 
 ---

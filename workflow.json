@@ -253,27 +253,27 @@
     },
     {
       "parameters": {
-        "resource": "draft",
-        "subject": "={{ $json.email_subject }}",
-        "emailType": "text",
-        "message": "={{ $json.email_body_text }}",
-        "options": {
-          "sendTo": "={{ $json.email }}",
-          "replyTo": "matija@horizen.rs"
-        }
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ from: \"Matija Radulović <matija@horizen.rs>\", to: [$json.email], reply_to: \"matija@horizen.rs\", subject: $json.email_subject, text: $json.email_body_text }) }}",
+        "options": {}
       },
       "id": "9bcdf090-bca1-44f2-87ce-9cea1f3a24e6",
-      "name": "Create Draft",
-      "type": "n8n-nodes-base.gmail",
-      "typeVersion": 2.2,
+      "name": "Send via Resend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
       "position": [
         1568,
         400
       ],
       "credentials": {
-        "gmailOAuth2": {
+        "httpHeaderAuth": {
           "id": "YOUR_CREDENTIAL_ID",
-          "name": "Gmail account"
+          "name": "Resend API"
         }
       }
     },
@@ -598,17 +598,6 @@
         ]
       ]
     },
-    "Create Draft": {
-      "main": [
-        [
-          {
-            "node": "Mark as Contacted",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Mark as Contacted": {
       "main": [
         [
@@ -624,7 +613,18 @@
       "main": [
         [
           {
-            "node": "Create Draft",
+            "node": "Send via Resend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via Resend": {
+      "main": [
+        [
+          {
+            "node": "Mark as Contacted",
             "type": "main",
             "index": 0
           }
