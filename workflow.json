@@ -253,27 +253,28 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://api.resend.com/emails",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ from: \"Matija Radulović <matija@horizen.rs>\", to: [$json.email], reply_to: \"matija@horizen.rs\", subject: $json.email_subject, text: $json.email_body_text }) }}",
-        "options": {}
+        "fromEmail": "Matija Radulović <matija@horizen.rs>",
+        "toEmail": "={{ $json.email }}",
+        "subject": "={{ $json.email_subject }}",
+        "emailFormat": "text",
+        "text": "={{ $json.email_body_text }}",
+        "options": {
+          "appendAttribution": false,
+          "replyTo": "matija@horizen.rs"
+        }
       },
       "id": "9bcdf090-bca1-44f2-87ce-9cea1f3a24e6",
-      "name": "Send via Resend",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "name": "Send Email (Zoho)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
       "position": [
         1568,
         400
       ],
       "credentials": {
-        "httpHeaderAuth": {
+        "smtp": {
           "id": "YOUR_CREDENTIAL_ID",
-          "name": "Resend API"
+          "name": "Zoho SMTP"
         }
       }
     },
@@ -613,14 +614,14 @@
       "main": [
         [
           {
-            "node": "Send via Resend",
+            "node": "Send Email (Zoho)",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Send via Resend": {
+    "Send Email (Zoho)": {
       "main": [
         [
           {

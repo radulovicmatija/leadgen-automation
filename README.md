@@ -3,9 +3,9 @@
 ![n8n](https://img.shields.io/badge/built%20with-n8n-EA4B71?style=flat-square&logo=n8n&logoColor=white)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4.1--mini-412991?style=flat-square&logo=openai&logoColor=white)
 ![Google Sheets](https://img.shields.io/badge/Google%20Sheets-leads-34A853?style=flat-square&logo=googlesheets&logoColor=white)
-![Resend](https://img.shields.io/badge/Resend-send-000000?style=flat-square&logo=resend&logoColor=white)
+![SMTP](https://img.shields.io/badge/SMTP-Zoho%20Mail-EA4335?style=flat-square&logo=zoho&logoColor=white)
 
-Fully automated outbound system that reads leads from Google Sheets, generates a personalized cold email in Serbian for each contact using GPT-4.1-mini, and sends it from your own domain via the Resend API — 5 times per day, at different hours, zero manual work.
+Fully automated outbound system that reads leads from Google Sheets, generates a personalized cold email in Serbian for each contact using GPT-4.1-mini, and sends it from your own mailbox over SMTP — 5 times per day, at different hours, zero manual work.
 
 Built for [Horizen AI](https://horizen.rs) to generate outbound interest in the AI Receptionist product.
 
@@ -56,8 +56,8 @@ No links in the body either (links are a spam signal in cold email) — only the
 │   ✍️  Build Email              Append signature + opt-out line      │
 │            │                   Pure plain text, no HTML             │
 │            ▼                                                        │
-│   📨  Send via Resend          POST to Resend API, sent from        │
-│            │                   matija@horizen.rs (verified domain)  │
+│   📨  Send Email (Zoho)        Sent over SMTP from your mailbox     │
+│            │                   matija@horizen.rs                    │
 │            ▼                                                        │
 │   ✅  Mark as Contacted        Updates Kontaktiran = true in sheet  │
 │            │                                                        │
@@ -67,9 +67,9 @@ No links in the body either (links are a spam signal in cold email) — only the
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-**Cost:** ~$0.01 per email (GPT-4.1-mini) + Resend free tier (3,000 emails/mo)
+**Cost:** ~$0.01 per email (GPT-4.1-mini); sending is included with your mailbox
 **Daily volume:** 5 emails/day — one per trigger, spread across working hours
-**Delivery:** Sent from your own domain via Resend; replies land in your normal inbox (domain MX is unchanged)
+**Delivery:** Sent over SMTP from your real mailbox; replies land directly in your inbox
 
 ---
 
@@ -152,7 +152,7 @@ The P.S. opt-out line matters: it dramatically reduces spam complaints (people r
 | Generate Email | OpenAI (LangChain) | GPT-4.1-mini writes personalized email |
 | Parse Response | Code (JS) | Extract JSON, handle parse errors |
 | Build Email | Code (JS) | Append signature + opt-out, output plain text |
-| Send via Resend | HTTP Request | POST to Resend API — sends from your verified domain |
+| Send Email (Zoho) | Send Email (SMTP) | Sends the email from your real mailbox |
 | Mark as Contacted | Google Sheets | Set `Kontaktiran = true` for the processed row |
 | Log | Code (JS) | Write result to n8n execution log |
 
@@ -184,35 +184,45 @@ Requires an active n8n instance with three credentials:
 |---|---|
 | Google Sheets OAuth2 | Get Leads · Mark as Contacted |
 | OpenAI API | Generate Email |
-| HTTP Header Auth (Resend) | Send via Resend |
+| SMTP | Send Email (Zoho) |
 
-### Resend setup (one-time)
+### SMTP setup (one-time)
 
-**1.** Create an account at [resend.com](https://resend.com) and add your domain (`horizen.rs`)
+Any mailbox with SMTP access works (Zoho, Fastmail, Google Workspace, etc.). Example for **Zoho Mail**:
 
-**2.** Resend gives you DNS records (SPF, DKIM, DMARC) — add them at your domain registrar and wait for verification (usually minutes). Without this, `from: matija@horizen.rs` will be rejected.
+**1.** In Zoho, generate an **app-specific password**: Settings → Security → App Passwords (a normal password won't work with 2FA enabled)
 
-**3.** Create an API key (starts with `re_`)
+**2.** In n8n, create an **SMTP** credential named `Zoho SMTP`:
 
-**4.** In n8n, create a **Header Auth** credential named `Resend API`:
-- **Name:** `Authorization`
-- **Value:** `Bearer re_your_api_key_here`
+| Field | Value |
+|---|---|
+| Host | `smtp.zoho.eu` (or `smtp.zoho.com` — match your Zoho data-center region) |
+| Port | `465` |
+| SSL/TLS | on |
+| User | `matija@horizen.rs` |
+| Password | the app-specific password from step 1 |
+
+> SMTP access requires a paid Zoho plan; the free plan is webmail-only. Confirm your exact host under Zoho → Settings → Mail Accounts → IMAP/SMTP.
+
+### Domain authentication
+
+Set up **SPF, DKIM and DMARC** for `horizen.rs` (Zoho provides the records in its admin console). This is what keeps your emails out of spam.
 
 ### Workflow setup
 
-**5.** Import `workflow.json` into n8n
+**3.** Import `workflow.json` into n8n
 
-**6.** In **Get Leads** and **Mark as Contacted** — select your spreadsheet and sheet tab
+**4.** In **Get Leads** and **Mark as Contacted** — select your spreadsheet and sheet tab
 
-**7.** Connect the three credentials to their nodes (the Resend key goes on **Send via Resend**)
+**5.** Connect the three credentials to their nodes (the SMTP credential goes on **Send Email (Zoho)**)
 
-**8.** Add a `Kontaktiran` column to your Google Sheet (leave all rows empty initially)
+**6.** Add a `Kontaktiran` column to your Google Sheet (leave all rows empty initially)
 
-**9.** Make sure the `Email` column is populated — rows without an email are skipped
+**7.** Make sure the `Email` column is populated — rows without an email are skipped
 
-**10.** Activate the workflow
+**8.** Activate the workflow
 
-> **Deliverability tip:** domain verification (SPF/DKIM/DMARC) is mandatory for Resend, not optional. Keep volume at 5–10/day for the first few weeks while the domain warms up.
+> **Deliverability tip:** keep volume at 5–10/day for the first few weeks while the domain warms up. Sending from your real mailbox keeps replies in your inbox and avoids transactional-ESP terms-of-service issues with cold outreach.
 
 ---
 
@@ -221,7 +231,7 @@ Requires an active n8n instance with three credentials:
 | | |
 |---|---|
 | Per email | ~$0.01 (GPT-4.1-mini) |
-| Resend | Free up to 3,000 emails/month |
+| Sending | Included with your mailbox (SMTP) |
 | 5 emails/day · 20 workdays | **~$1/month** |
 
 ---
